@@ -1,0 +1,27 @@
+#var huashan[META] {
+	{NAME} {huashan}
+	{DESC} {华山派辅助脚本}
+	{AUTHOR} {mnikn}
+};
+
+#func {huashan.Init} {
+	okLog 华山辅助脚本启动！;
+	#return true;
+}
+
+
+#alias {yue.pai} {give ling pai to yue lingshan};
+#alias {yue.askjob} {ask yue lingshan about job};
+
+#alias yue-job {
+	#echo 开始自动任务！;
+
+	#nop ask yue lingshan about job;
+
+	#local job_paths {n;n;e;sd;sd;sd;nu;nu;nu;w;nd;eu;wd;nu;n;nd;wu;ed;nw;nd;nd;nu;sd;wd;nd;wd;nd;nw;n;s;se;su;eu;su;eu;su;su;se;su;s;sd;su;s;s;};
+	path.WalkSteps {$job_paths} {
+		#echo test;
+		#nop give ling pai to yue lingshan;
+		#echo 结束自动任务！;
+	};
+}

@@ -1,0 +1,59 @@
+#alias shortcut[META] {
+	{NAME} {shortcut}
+	{DESC} {通用快捷键}
+	{AUTHOR} {mnikn}
+}
+
+#func shortcut.Init {
+	#return true;
+}
+
+
+#alias autoxue {
+	#var autoxue-target-person %1;
+	#var autoxue-target-skill %2;
+	#var autoxue-times 10;
+
+	#echo 自动学习开始！;
+	#tick autoxue-ticker {
+		#if {$char[忙] || $char[HP][当前精神] < $char[HP][最大精神]} {
+			#return;
+		}
+		xue $autoxue-target-person for $autoxue-target-skill $autoxue-times;
+	} 5;
+
+	#act {缺乏实战经验} {remove-autoxue;};
+}
+#alias remove-autoxue {
+	#untick autoxue-ticker;
+	#echo 自动学习结束！; 
+}
+
+#alias autodazuo {
+	#echo 自动打坐开始！;
+	#tick autodazuo-ticker {
+		#if {$char[忙] || $char[HP][当前气血] < $char[HP][最大气血] || $char[HP][当前精神] < $char[HP][最大精神]} {
+			#return;
+		};
+		dazuo 100;
+	} 20;
+}
+#alias remove-autodazuo {
+	#untick autodazuo-ticker;
+	#echo 自动打坐结束！;
+}
+
+
+#alias autotuna {
+	#echo 自动吐纳开始！;
+	#tick autotuna-ticker {
+		#if {$char[忙] || $char[HP][当前精神] < $char[HP][最大精神]} {
+			#return;
+		};
+		tuna 100;
+	} 20;
+}
+#alias remove-autotuna {
+	#untick autotuna-ticker;
+	#echo 自动吐纳结束！;
+}
