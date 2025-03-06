@@ -10,18 +10,103 @@
 }
 
 
-#alias {yue.pai} {give ling pai to yue lingshan};
-#alias {yue.askjob} {ask yue lingshan about job};
+#var yue-can-autojob true;
+#alias yue-autojob {
+	okLog 开启自动巡山！;
+	#undelay {yue-autojob-delayer};
+	#delay {yue-autojob-delayer} {
+		yue-autojob;
+	} 170;
+	yue-job;
+}
+#alias remove-yue-autojob {
+	okLog 结束自动巡山！;
+	#undelay {yue-autojob-delayer};
+}
 
 #alias yue-job {
-	#echo 开始自动任务！;
+	okLog 开始巡山！;
+	ask yue lingshan about job;
 
-	#nop ask yue lingshan about job;
+	event.Handle {GMCP.Move} {path.Walk} {$MODULE} {yue-job-step};
 
-	#local job_paths {n;n;e;sd;sd;sd;nu;nu;nu;w;nd;eu;wd;nu;n;nd;wu;ed;nw;nd;nd;nu;sd;wd;nd;wd;nd;nw;n;s;se;su;eu;su;eu;su;su;se;su;s;sd;su;s;s;};
-	path.WalkSteps {$job_paths} {
-		#echo test;
-		#nop give ling pai to yue lingshan;
-		#echo 结束自动任务！;
+	#local go_job_paths {n;n;e;sd;sd;sd;nu;nu;nu;w;nd;eu;wd;nu;n;nd;wu;ed;nw;nd;nd;nu;sd;wd;nd;wd;nd;nw;n;s};
+	#local return_paths {se;su;eu;su;eu;su;su;se;su;s;sd;su;s;s};
+
+	path.WalkSteps {$go_job_paths} {
+		okLog 巡山路线结束;
+		event.UnHandle {GMCP.Move} {path.Walk};
+		
+		path.WalkSteps {$return_paths} {
+			#if {"$gMapRoom[name]" != "客厅"} {
+				remove-yue-autojob;
+				#return;
+			};
+
+			#delay 1 {give ling pai to yue lingshan;};
+			okLog 结束巡山！;
+		};
+
 	};
+}
+#alias yue-job-step {
+	path.Walk.Stop;
+	#delay {yue-job-step-delayer} {
+		path.Walk.Resume;
+	} 3;
+}
+
+#alias huashan-feed {
+	#if {$char[HP][忙]} {
+		#return;
+	};
+
+	#echo 开始补满状态！;
+	path.WalkSteps {n;n;e} {
+		fill hulu;
+		drink;
+		drink;
+		drink;
+		drink;
+		drink;
+		drink;
+		drink;
+		drink;
+		drink;
+		drink;
+		fill hulu;
+		
+		
+		path.WalkSteps {w;s;s;s;s} {
+			get mala doufu;
+			eat mala doufu;	
+			eat mala doufu;	
+			eat mala doufu;	
+			eat mala doufu;
+
+			
+			path.WalkSteps {n;w;s} {
+				sleep;
+				#action {^你一觉醒来} {
+					path.WalkSteps {n;e;n} {
+						okLog 结束补满状态！;
+						#unaction {^你一觉醒来};
+					};
+				};
+			};
+		};
+	};
+}
+
+#alias autofeed {
+	okLog 开始自动补满状态！;
+	#tick autofeed-ticker {
+		#if {$char[HP][食物] < 30 || $char[HP][饮水] < 30 && "$gMapRoom[name]" == "客厅"} {
+			huashan-feed;
+		};
+	} 20;
+}
+#alias remove-autofeed {
+	#untick autofeed-ticker;
+	okLog 结束自动补满状态！;
 }

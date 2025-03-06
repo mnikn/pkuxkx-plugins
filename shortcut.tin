@@ -1,4 +1,4 @@
-#alias shortcut[META] {
+#var shortcut[META] {
 	{NAME} {shortcut}
 	{DESC} {通用快捷键}
 	{AUTHOR} {mnikn}
@@ -16,9 +16,9 @@
 
 	#echo 自动学习开始！;
 	#tick autoxue-ticker {
-		#if {$char[忙] || $char[HP][当前精神] < $char[HP][最大精神]} {
+		#if {@char.IsBusy{} || $char[HP][当前精神] < $char[HP][最大精神]} {
 			#return;
-		}
+		};
 		xue $autoxue-target-person for $autoxue-target-skill $autoxue-times;
 	} 5;
 
@@ -32,11 +32,20 @@
 #alias autodazuo {
 	#echo 自动打坐开始！;
 	#tick autodazuo-ticker {
-		#if {$char[忙] || $char[HP][当前气血] < $char[HP][最大气血] || $char[HP][当前精神] < $char[HP][最大精神]} {
+		#if {@char.IsBusy{} || $char[HP][气血百分比] < 80 || $char[HP][精神百分比] < 80} {
 			#return;
 		};
-		dazuo 100;
-	} 20;
+
+		#action {无法产生内息运行全身经脉。$} {remove-autodazuo};
+		#action {你现在内力接近圆满} {dazuo 10;};
+
+		#if { $char[HP][内力百分比] < 99 } {
+        		dazuo max;
+    		};
+    		#else {
+        		dazuo 10;
+    		};
+	} 5;
 }
 #alias remove-autodazuo {
 	#untick autodazuo-ticker;
@@ -47,10 +56,11 @@
 #alias autotuna {
 	#echo 自动吐纳开始！;
 	#tick autotuna-ticker {
-		#if {$char[忙] || $char[HP][当前精神] < $char[HP][最大精神]} {
+		#if {@char.IsBusy{} || $char[HP][当前精神] < $char[HP][最大精神]} {
 			#return;
 		};
-		tuna 100;
+		#action {无法修行精力} {remove-autotuna};
+		tuna $char[HP][最大精神]-1;
 	} 20;
 }
 #alias remove-autotuna {
