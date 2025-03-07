@@ -9,29 +9,42 @@
 }
 
 
-#alias autoxue {
-	#var autoxue-target-person %1;
-	#var autoxue-target-skill %2;
-	#var autoxue-times 10;
+#alias auto-xue {
+	#var auto-xue-target-person %1;
+	#var auto-xue-target-skill %2;
+	#var auto-xue-times 10;
 
 	#echo 自动学习开始！;
-	#tick autoxue-ticker {
-		#if {@char.IsBusy{} || $char[HP][当前精神] < $char[HP][最大精神]} {
+	#tick auto-xue-ticker {
+		#if {@char.IsBusy{}} {
 			#return;
 		};
-		xue $autoxue-target-person for $autoxue-target-skill $autoxue-times;
+
+		
+		#if {$char[HP][精神百分比] == 100} {
+			xue $auto-xue-target-person for $auto-xue-target-skill $auto-xue-times;
+		};
+		#else {
+			#if {$char[HP][内力百分比] > 30} {
+				yun regenerate;
+			};
+			#if {$char[HP][内力百分比] < 30 && $char[HP][气血百分比] > 80 && $char[HP][精神百分比] > 80} {
+				dazuo max;
+			};
+		};
+		
 	} 5;
 
-	#act {缺乏实战经验} {remove-autoxue;};
+	#act {缺乏实战经验} {remove-auto-xue;};
 }
-#alias remove-autoxue {
-	#untick autoxue-ticker;
+#alias remove-auto-xue {
+	#untick auto-xue-ticker;
 	#echo 自动学习结束！; 
 }
 
-#alias autodazuo {
-	#echo 自动打坐开始！;
-	#tick autodazuo-ticker {
+#alias auto-dazuo {
+	okLog 自动打坐开始！;
+	#tick auto-dazuo-ticker {
 		#if {@char.IsBusy{} || $char[HP][气血百分比] < 80 || $char[HP][精神百分比] < 80} {
 			#return;
 		};
@@ -47,23 +60,49 @@
     		};
 	} 5;
 }
-#alias remove-autodazuo {
-	#untick autodazuo-ticker;
-	#echo 自动打坐结束！;
+
+#alias remove-auto-dazuo {
+	#untick auto-dazuo-ticker;
+	okLog 自动打坐结束！;
 }
 
 
-#alias autotuna {
-	#echo 自动吐纳开始！;
-	#tick autotuna-ticker {
-		#if {@char.IsBusy{} || $char[HP][当前精神] < $char[HP][最大精神]} {
+#alias auto-tuna {
+	okLog 自动吐纳开始！;
+	#tick auto-dazuo-ticker {
+		#if {@char.IsBusy{} || $char[HP][气血百分比] < 80 || $char[HP][精神百分比] < 80} {
 			#return;
 		};
-		#action {无法修行精力} {remove-autotuna};
-		tuna $char[HP][最大精神]-1;
-	} 20;
+
+        	tuna max;
+	} 5;
 }
-#alias remove-autotuna {
-	#untick autotuna-ticker;
-	#echo 自动吐纳结束！;
+#alias remove-auto-tuna {
+	#untick auto-tuna-ticker;
+	okLog 自动吐纳结束！;
+}
+
+
+#alias auto-fullstatus {
+	okLog 自动补满状态启动！;
+	#tick auto-fullstatus-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+		
+		#if {$char[HP][内力百分比] < 99 && $char[HP][气血百分比] > 80 && $char[HP][精神百分比] > 80} {
+			dazuo max;
+		};
+
+		#if {${char[HP][饮水] < 150}} {
+			drink;
+			drink;
+			drink;
+		}
+	} 1;
+}
+
+#alias remove-auto-fullstatus {
+	#untick auto-fullstatus-ticker;
+	okLog 自动补满状态结束！;
 }
