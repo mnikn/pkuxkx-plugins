@@ -21,19 +21,19 @@
 		};
 
 		
-		#if {$char[HP][精神百分比] == 100} {
+		#if {$char[HP][精神百分比] > 80} {
 			xue $auto-xue-target-person for $auto-xue-target-skill $auto-xue-times;
 		};
 		#else {
-			#if {$char[HP][内力百分比] > 30} {
-				yun regenerate;
+			#if {$char[HP][当前内力] < 50} {
+				#return;	
 			};
-			#if {$char[HP][内力百分比] < 30 && $char[HP][气血百分比] > 80 && $char[HP][精神百分比] > 80} {
-				dazuo max;
+			#if {$char[HP][内力百分比] > 45} {
+				yun regenerate;
 			};
 		};
 		
-	} 5;
+	} 1;
 
 	#act {缺乏实战经验} {remove-auto-xue;};
 }
@@ -42,23 +42,34 @@
 	#echo 自动学习结束！; 
 }
 
+#alias dazuo-inc {
+	dazuo max;
+	dazuo 10;
+}
 #alias auto-dazuo {
 	okLog 自动打坐开始！;
 	#tick auto-dazuo-ticker {
-		#if {@char.IsBusy{} || $char[HP][气血百分比] < 80 || $char[HP][精神百分比] < 80} {
+		#if {@char.IsBusy{} || $char[HP][精神百分比] < 80} {
 			#return;
 		};
 
 		#action {无法产生内息运行全身经脉。$} {remove-autodazuo};
-		#action {你现在内力接近圆满} {dazuo 10;};
+		#action {你现在内力接近圆满} {
+			#if {@char.IsBusy{}} {
+				#return;
+			};
+			dazuo 10;
+		};
 
 		#if { $char[HP][内力百分比] < 99 } {
-        		dazuo max;
+			#if {$char[HP][气血百分比] > 80} {
+        			dazuo max;
+			};
     		};
     		#else {
         		dazuo 10;
     		};
-	} 5;
+	} 1;
 }
 
 #alias remove-auto-dazuo {

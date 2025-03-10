@@ -8,15 +8,12 @@
 	okLog 华山辅助脚本启动！;
 	#return true;
 }
-
-
-#var yue-can-autojob true;
 #alias yue-autojob {
 	okLog 开启自动巡山！;
 	#undelay {yue-autojob-delayer};
 	#delay {yue-autojob-delayer} {
 		yue-autojob;
-	} 170;
+	} 160;
 	yue-job;
 }
 #alias remove-yue-autojob {
@@ -31,29 +28,25 @@
 	event.Handle {GMCP.Move} {path.Walk} {$MODULE} {yue-job-step};
 
 	#local go_job_paths {n;n;e;sd;sd;sd;nu;nu;nu;w;nd;eu;wd;nu;n;nd;wu;ed;nw;nd;nd;nu;sd;wd;nd;wd;nd;nw;n;s};
-	#local return_paths {se;su;eu;su;eu;su;su;se;su;s;sd;su;s;s};
-
 	path.WalkSteps {$go_job_paths} {
 		okLog 巡山路线结束;
 		event.UnHandle {GMCP.Move} {path.Walk};
-		
+
+		#local return_paths {se;su;eu;su;eu;su;su;se;su;s;sd;su;s;s};
 		path.WalkSteps {$return_paths} {
-			#if {"$gMapRoom[name]" != "客厅"} {
-				remove-yue-autojob;
-				#return;
-			};
-
-			#delay 1 {give ling pai to yue lingshan;};
+			#delay 1 {give ling pai to yue lingshan};
 			okLog 结束巡山！;
-		};
-
+		}
 	};
+	#return; 
 }
+
 #alias yue-job-step {
 	path.Walk.Stop;
+	
 	#delay {yue-job-step-delayer} {
 		path.Walk.Resume;
-	} 3;
+	} 4;
 }
 
 #alias huashan-feed {
@@ -78,11 +71,11 @@
 		
 		
 		path.WalkSteps {w;s;s;s;s} {
-			get mala doufu;
-			eat mala doufu;	
-			eat mala doufu;	
-			eat mala doufu;	
-			eat mala doufu;
+			get bocai fentiao;
+			eat bocai fentiao;	
+			eat bocai fentiao;	
+			eat bocai fentiao;	
+			eat bocai fentiao;
 
 			
 			path.WalkSteps {n;w;s} {
