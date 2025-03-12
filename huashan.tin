@@ -21,7 +21,11 @@
 	#undelay {yue-autojob-delayer};
 }
 
+#var yue-auto-job-enable {false};
 #alias yue-job {
+	#if {"%1" != ""} {
+		#var yue-auto-job-enable {%1};
+	};
 	okLog 开始巡山！;
 	ask yue lingshan about job;
 
@@ -34,11 +38,27 @@
 
 		#local return_paths {se;su;eu;su;eu;su;su;se;su;s;sd;su;s;s};
 		path.WalkSteps {$return_paths} {
-			#delay 1 {give ling pai to yue lingshan};
+			give ling pai to yue lingshan;
 			okLog 结束巡山！;
+			
+			#if {$yue-auto-job-enable} {
+				#delay yue-job-delayer {
+					#if (!@char.IsBusy{}) {
+						yue-job $yue-auto-job-enable;
+					};
+					#else {
+						busy.Wait {
+							yue-job $yue-auto-job-enable;
+						};
+					};
+				} 2;
+			};
 		}
 	};
 	#return; 
+}
+#alias remove-yue-job {
+	#var yue-auto-job-enable {false};
 }
 
 #alias yue-job-step {

@@ -49,7 +49,7 @@
 #alias auto-dazuo {
 	okLog 自动打坐开始！;
 	#tick auto-dazuo-ticker {
-		#if {@char.IsBusy{} || $char[HP][精神百分比] < 80} {
+		#if {@char.IsBusy{} || $char[HP][精神百分比] < 70} {
 			#return;
 		};
 
@@ -80,13 +80,27 @@
 
 #alias auto-tuna {
 	okLog 自动吐纳开始！;
-	#tick auto-dazuo-ticker {
-		#if {@char.IsBusy{} || $char[HP][气血百分比] < 80 || $char[HP][精神百分比] < 80} {
+	#tick auto-tuna-ticker {
+		#if {@char.IsBusy{} || $char[HP][气血百分比] < 70} {
 			#return;
 		};
 
-        	tuna max;
-	} 5;
+		#action {你现在精力接近圆满} {
+			#if {@char.IsBusy{}} {
+				#return;
+			};
+			tuna 10;
+		};
+
+		#if { $char[HP][精力百分比] < 99 } {
+			#if {$char[HP][精神百分比] > 80} {
+        			tuna max;
+			};
+    		};
+    		#else {
+        		tuna 10;
+    		};
+	} 1;
 }
 #alias remove-auto-tuna {
 	#untick auto-tuna-ticker;

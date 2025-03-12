@@ -1,0 +1,28 @@
+#var task[META] {
+	{NAME} {huashan}
+	{DESC} {任务辅助脚本}
+	{AUTHOR} {mnikn}
+};
+
+#func {task.Init} {
+	okLog 任务辅助脚本启动！;
+	#return true;
+}
+
+#alias chaojin {
+	ask sengren about job;
+	node walk sms_sjy;
+	#action {^你顺利到达了终点} {
+		#unaction {^你顺利到达了终点};
+		write jing;
+		#action {你默写良久，终于抄完了} {
+			#delay {chao-jin-delayer} {
+				node walk sjy_sms;
+				#action {^你顺利到达了终点} {
+					#unaction {^你顺利到达了终点};
+					ask sengren about done;
+				};
+			} 2;
+		};
+	}
+}
