@@ -69,6 +69,10 @@
 	} 4;
 }
 
+#alias ningjob {ask ning about job}
+#alias ningfin {ask ning about finish}
+#alias zd {zhidian student};
+#alias gen {ask student about 跟随};
 #alias huashan-feed {
 	#if {$char[HP][忙]} {
 		#return;
@@ -91,11 +95,11 @@
 		
 		
 		path.WalkSteps {w;s;s;s;s} {
-			get bocai fentiao;
-			eat bocai fentiao;	
-			eat bocai fentiao;	
-			eat bocai fentiao;	
-			eat bocai fentiao;
+			get liuli qiezi;
+			eat liuli qiezi;	
+			eat liuli qiezi;	
+			eat liuli qiezi;	
+			eat liuli qiezi;
 
 			
 			path.WalkSteps {n;w;s} {
@@ -110,6 +114,65 @@
 		};
 	};
 }
+
+#alias do-ningjob {
+	ask ning about job;
+	e;e;e;
+	auto-zd;
+	#action {趁你不注意} {
+		remove-auto-zd;
+		map.FocusNPC {{id} {$user[id]'s student}} command {get_dz};
+		event.Handle {GMCP.Move} {path.Walk} {$MODULE} {zd_walk_time};
+		path.WalkSteps {$dizi-path} {#delay 1 auto-zd};
+	};
+	#action {有板有眼} {
+		#unaction {趁你不注意};
+		#unaction {有板有眼};
+		remove-auto-zd;
+		w;w;w;
+		ask ning about finish;
+	};
+}
+#alias auto-zd {
+	#tick auto-zd-ticker {
+		zhidian student;
+	} 1;
+}
+#alias remove-auto-zd {
+	#untick auto-zd-ticker; 
+}
+
+#var dizi-path {w;s;n;w;s;n;w;e;e;n;n;n;e;e;w;sd;sd;sd;nu;nu;nu;w;nd;enter;out;eu;wd;nw;wd;w;sw;ne;up;down;e;eu;se;nu;n;nd;wu;ed;n;nd;nd;w;enter;out;east;nd;su;su;su;s;nw;nd;nd;nu;sd;wd;nd;wd;nd;nw;n;s;ne;sw;se;se;enter;out;su;enter;out;sw;sw;eu;su;eu;nu;sd;su;su;e;su;sw;s;sd;su;s;s;s;e};
+#alias find-dizi {
+	map.FocusNPC {{id} {$user[id]'s student}} command {get_dz};
+	event.Handle {GMCP.Move} {path.Walk} {$MODULE} {zd_walk_time};
+	path.WalkSteps {$dizi-path};
+}
+#alias get_dz {
+	#undelay walk.Resume;
+	#action {%*道：好吧，好吧，我回去还不行吗？} {
+		#untick tk_ask_dizi;
+		map.FocusNPC;
+		path.Walk.Stop;
+	};
+	#tick {tk_ask_dizi} {ask student about 跟随;} {2};
+}
+
+#alias zd_walk_time {
+	#if {"$gGMCP[Move][房间名]" == "练功房"} {
+		path.end;
+		event.UnHandle {GMCP.Move} {path.Walk};
+		#return;
+	};
+	path.Walk.Stop;
+	#if {"$gGMCP[Move][房间名]" == "栈道"} {
+		#delay walk.Resume {path.Walk.Resume} 2.0;
+		#return;
+	};
+
+	#delay walk.Resume {path.Walk.Resume} 0.2;
+}
+
 
 #alias autofeed {
 	okLog 开始自动补满状态！;

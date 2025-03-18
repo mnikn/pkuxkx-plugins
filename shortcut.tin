@@ -42,6 +42,36 @@
 	#echo 自动学习结束！; 
 }
 
+#alias auto-study {
+	#var auto-study-target %1;
+	#var auto-xue-times 10;
+
+	#echo 自动学习开始！;
+	#tick auto-study-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+
+		
+		#if {$char[HP][精神百分比] > 80} {
+			study $auto-study-target for $auto-xue-times;
+		};
+		#else {
+			#if {$char[HP][当前内力] < 50} {
+				#return;	
+			};
+			#if {$char[HP][内力百分比] > 45} {
+				yun regenerate;
+			};
+		};
+		
+	} 1;
+}
+#alias remove-auto-study {
+	#untick auto-study-ticker;
+	#echo 自动学习结束！; 
+}
+
 #alias dazuo-inc {
 	dazuo max;
 	dazuo 10;
@@ -107,6 +137,15 @@
 	okLog 自动吐纳结束！;
 }
 
+#alias auto-pingdiao {
+	pingdiao;
+	#action {你凭吊完毕} {
+		#delay 1 {pingdiao;};
+	};
+}
+#alias remove-auto-pingdiao {
+	#unaction {你凭吊完毕};
+}
 
 #alias auto-fullstatus {
 	okLog 自动补满状态启动！;
@@ -130,4 +169,19 @@
 #alias remove-auto-fullstatus {
 	#untick auto-fullstatus-ticker;
 	okLog 自动补满状态结束！;
+}
+
+#alias auto-climb-tree {
+	#tick auto-climb-tree-ticker {
+		#if {$char[HP][气血百分比] < 50} {
+			#if {$char[HP][内力百分比] > 49} {
+				yun recover;
+			};
+			#return;
+		};
+		climb tree;
+	} 2;
+}
+#alias remove-auto-climb-tree {
+	#untick auto-climb-tree-ticker;
 }
