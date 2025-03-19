@@ -1,0 +1,20 @@
+#var gumu[META] {
+	{NAME} {gumu}
+	{DESC} {gumu 辅助脚本}
+	{AUTHOR} {mnikn}
+};
+
+#func {gumu.Init} {
+	okLog gumu 辅助脚本启动！;
+	#return true;
+}
+
+#alias shuibed {
+	shui bed;
+	#action {^你冻得瑟瑟发抖，却发觉自己的功力有了进境。} {
+    		#delay 1 {shui bed};
+	};
+}
+#alias remove-shuibed {
+	#unaction {^你冻得瑟瑟发抖，却发觉自己的功力有了进境。}
+}

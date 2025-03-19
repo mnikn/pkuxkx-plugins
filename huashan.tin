@@ -173,6 +173,10 @@
 	#delay walk.Resume {path.Walk.Resume} 0.2;
 }
 
+#alias huashan-mz {
+	loyalty challenge;
+}
+
 
 #alias autofeed {
 	okLog 开始自动补满状态！;

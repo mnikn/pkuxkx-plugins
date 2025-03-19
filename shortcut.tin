@@ -21,7 +21,7 @@
 		};
 
 		
-		#if {$char[HP][精神百分比] > 80} {
+		#if {$char[HP][当前精神] > 80} {
 			xue $auto-xue-target-person for $auto-xue-target-skill $auto-xue-times;
 		};
 		#else {
@@ -79,7 +79,7 @@
 #alias auto-dazuo {
 	okLog 自动打坐开始！;
 	#tick auto-dazuo-ticker {
-		#if {@char.IsBusy{} || $char[HP][精神百分比] < 70} {
+		#if {@char.IsBusy{} || $char[HP][当前精神] < 99} {
 			#return;
 		};
 
@@ -92,7 +92,7 @@
 		};
 
 		#if { $char[HP][内力百分比] < 99 } {
-			#if {$char[HP][气血百分比] > 80} {
+			#if {$char[HP][当前气血] >= 100} {
         			dazuo max;
 			};
     		};
@@ -184,4 +184,21 @@
 }
 #alias remove-auto-climb-tree {
 	#untick auto-climb-tree-ticker;
+}
+
+#alias cb {
+	yun powerup;
+	#tick cb-ticker {
+		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分百] > 30} {
+			yun heal;
+		}
+	} 2;
+}
+
+#alias ecb {
+	#untick cb-ticker;
+}
+
+#alias pfm {
+	perform taiyi-jian.bafang;
 }
