@@ -18,3 +18,56 @@
 #alias remove-shuibed {
 	#unaction {^你冻得瑟瑟发抖，却发觉自己的功力有了进境。}
 }
+
+#alias gumu-xue {
+	#tick gumu-xue-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+
+		#if {$char[HP][当前精神] >= 100} {
+			xue hong for yunu-xinfa 10;
+		};
+
+		#if {$char[HP][内力百分比] < 50 && $char[HP][气血百分比] == 100 && $char[HP][精神百分比] >= 80} {
+			dazuo max;
+		};
+
+		#if {$char[HP][内力百分比] >= 50} {
+			yun regenerate;
+		};
+
+		#if {$char[HP][当前精神] < 20 && $char[HP][气血百分比] < 20} {
+			remove-gumu-xue;
+			e;e;s;s;s;w;w;s;
+			#action {精神抖擞} {
+				#unaction {精神抖擞};
+				n;e;e;n;n;n;w;w;
+				gumu-xue;
+			};
+			sleep;
+		};
+		
+	} 2;
+}
+
+#alias remove-gumu-xue {
+	#untick gumu-xue-ticker;
+}
+
+#alias wangma {
+	#tick wangma-ticker {
+		#if {@char.IsBusy{} || $char[HP][气血百分比] < 20} {
+			#if {$char[HP][内力百分比] == 50} {
+				yun recover;
+			};
+			#return;
+		};
+
+		wang maque;
+		
+	} 1;
+}
+#alias remove-wangma {
+	#untick wangma-ticker;
+}
