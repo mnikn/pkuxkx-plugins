@@ -57,7 +57,10 @@
 
 #alias wangma {
 	#tick wangma-ticker {
-		#if {@char.IsBusy{} || $char[HP][气血百分比] < 20} {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+		#if {$char[HP][气血百分比] < 20} {
 			#if {$char[HP][内力百分比] == 50} {
 				yun recover;
 			};
@@ -70,4 +73,64 @@
 }
 #alias remove-wangma {
 	#untick wangma-ticker;
+}
+
+#alias z {
+	zhuo;
+}
+
+#alias xj {
+	ask xiao about job;
+}
+
+#alias jin {
+	ask yang about 进墓;
+}
+#alias chu {
+	s;s;s;s;e;s;s;s;w;
+	ask sun about 出墓;
+}
+
+#alias feng {
+	#action {开始清理} {
+		#delay 3 {qingli};
+	};
+	#action {可以开始吹笛} {
+		blow;
+	};
+	#action {半只蜜蜂也没有} {
+		#delay 3 {blow};
+	};
+	#action {可以开始提取} {
+		#delay 15 {tiqu};
+	};
+	#action {开始提取玉蜂的花蜜} {
+		#delay 3 {tiqu};
+	};
+	qingli;
+}
+
+#alias lturn {
+	path.WalkSteps {s;s;e} {
+		#local zhao {yunu-jianfa};
+		#local tea {yang};
+		xue $tea for $zhao 10;	
+		xue $tea for $zhao 10;	
+		xue $tea for $zhao 10;	
+		yun regenerate;
+		xue $tea for $zhao 10;	
+		xue $tea for $zhao 10;	
+		xue $tea for $zhao 10;	
+
+		
+		path.WalkSteps {w;s;s;e;s;s;s;w;n;n} {
+			shui bed;
+			#action {一周天} {
+				#unaction {一周天};
+				#delay 2 {
+					s;s;e;n;n;n;w;n;n;n;n;
+				};
+			}
+		}
+	};
 }

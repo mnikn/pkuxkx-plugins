@@ -119,7 +119,7 @@
 			dazuo 10;
 		};
 
-		#if {$char[HP][气血百分比] < 30} {
+		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分比] < 80} {
 			sleep;
 			#return;
 		};
