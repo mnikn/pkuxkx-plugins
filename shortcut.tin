@@ -47,6 +47,8 @@
 	#var auto-xue-target-skill %2;
 	#var auto-xue-times 10;
 
+	auto-dazuo;
+
 	#echo 自动学习开始！;
 	#tick auto-xuem-ticker {
 		#if {@char.IsBusy{}} {
@@ -63,21 +65,24 @@
 		};
 
 
-		#if {$char[HP][精神百分比] <= 30} {
+		#if {$char[HP][精神百分比] <= 30 && $char[HP][气血百分比] <= 30} {
 			sleep;
 		};
 
 		
 	} 2;
 }
-
 #alias remove-auto-xuem {
 	#untick auto-xuem-ticker;
+	remove-auto-dazuo;
 }
 
+#alias sshu {
+	study shu for 5;
+}
 #alias auto-study {
 	#var auto-study-target %1;
-	#var auto-xue-times 10;
+	#var auto-xue-times 5;
 
 	#echo 自动学习开始！;
 	#tick auto-study-ticker {
@@ -86,23 +91,55 @@
 		};
 
 		
-		#if {$char[HP][精神百分比] > 80} {
+		#if {$char[HP][当前精神] > 70} {
 			study $auto-study-target for $auto-xue-times;
 		};
 		#else {
-			#if {$char[HP][当前内力] < 50} {
+			#if {$char[HP][内力百分比] == 50} {
+				yun regenerate;
 				#return;	
 			};
-			#if {$char[HP][内力百分比] > 45} {
-				yun regenerate;
-			};
+			sleep;
 		};
-		
 	} 1;
 }
 #alias remove-auto-study {
 	#untick auto-study-ticker;
 	#echo 自动学习结束！; 
+}
+
+#alias auto-studym {
+	#var auto-study-book %1;
+	#var auto-study-times 5;
+
+	auto-dazuo;
+
+	#echo 自动学习开始！;
+	#tick auto-studym-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+
+		
+		#if {$char[HP][当前精神] > 80} {
+			study $auto-study-book for $auto-study-times;
+		};
+
+		#if {$char[HP][内力百分比] >= 20} {
+			yun regenerate;
+		};
+
+
+		#if {$char[HP][精神百分比] <= 30 && $char[HP][气血百分比] <= 30} {
+			sleep;
+		};
+
+		
+	} 2;
+}
+#alias remove-auto-studym {
+	#untick auto-studym-ticker;
+	remove-auto-dazuo;
 }
 
 #alias auto-dazuo-inc {
@@ -111,24 +148,31 @@
 		#if {@char.IsBusy{} || $char[HP][当前精神] < 99} {
 			#return;
 		};
-		#action {无法产生内息运行全身经脉。$} {remove-auto-dazuo-inc};
 		#action {你现在内力接近圆满} {
 			#if {@char.IsBusy{}} {
 				#return;
 			};
 			dazuo 10;
+			#if {$char[HP][气血百分比] < 30} {
+				sleep;
+			};
 		};
 
-		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分比] < 80} {
+		
+		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分比] == 50} {
 			sleep;
 			#return;
 		};
+
 		
 		#if { $char[HP][内力百分比] < 99 } {
         		dazuo max;
     		};
 		#else {
         		dazuo 10;
+			#if {$char[HP][气血百分比] < 30} {
+				sleep;
+			};
 		};
 		
 	} 2;
@@ -264,5 +308,18 @@
 }
 
 #alias pfm {
-	perform taiyi-jian.bafang;
+	perform sword.bafang;
+}
+
+#alias crosshe {
+	ask yi about huanghe;
+	#action {上岸吧} {
+		#unaction {上岸吧};
+		out;
+	}
+	#action {正等着你呢} {
+		#unaction {正等着你呢}
+		enter;
+	}
+	yell boat;
 }

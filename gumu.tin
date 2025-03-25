@@ -134,3 +134,19 @@
 		}
 	};
 }
+
+#alias tuzi {
+	map.FocusNPC {{id} {Hui tu}} command {zuo_tuzi};	
+}
+
+#alias remove-tuzi {
+	map.FocusNPC;
+}
+
+
+#alias zuo_tuzi {
+	zhuo;
+}
+
+
+

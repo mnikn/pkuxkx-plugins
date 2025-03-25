@@ -1,0 +1,40 @@
+#var ming[META] {
+	{NAME} {ming}
+	{DESC} {ming 辅助脚本}
+	{AUTHOR} {mnikn}
+};
+
+#func {ming.Init} {
+	okLog ming 辅助脚本启动！;
+	#return true;
+}
+
+#alias alm {
+	#tick alm-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+		liaowang;	
+	} 1;
+	#action {你站岗完毕} {
+		remove-alm;
+	};
+}
+
+#alias remove-alm {
+	#untick alm-ticker;
+	#unaction {你站岗完毕};
+}
+
+#alias yj {
+	ask yang about job;
+}
+
+
+#alias ym {
+	ask yang about fuming;
+}
+
+#alias xx {
+	xue yan for guangming-shenghuogong 10;
+}
