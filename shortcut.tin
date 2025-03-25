@@ -316,10 +316,10 @@
 	#action {上岸吧} {
 		#unaction {上岸吧};
 		out;
-	}
+	};
 	#action {正等着你呢} {
-		#unaction {正等着你呢}
+		#unaction {正等着你呢};
 		enter;
-	}
+	};
 	yell boat;
 }
