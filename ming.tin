@@ -38,3 +38,54 @@
 #alias xx {
 	xue yan for guangming-shenghuogong 10;
 }
+
+#alias ja {
+	jiachai;
+}
+#alias fen {
+	shanfeng;
+}
+
+#alias daoshui {
+	fill guan;
+	#delay 4 {
+		s;s;s;s;e;
+		dao gang;
+		#delay 4 {
+			w;n;n;n;n;
+		}
+	};
+}
+
+#alias kanhuo {
+	#action {可能有必要用扇子} {fen};
+	#action {应该马上扇} {fen};
+	#action {马上扇呀} {fen};
+	#action {快扇风啊} {fen};
+	#action {扇扇扇} {fen};
+	#action {很必要用扇子} {fen};
+	#action {， 有必要用扇子} {fen};
+	#action {快点扇风吧} {fen};
+	#action {也许有必要用扇子} {fen};
+	#action {似乎很必要用扇子} {fen};
+	#action {好像有必要用扇子} {fen};
+	#action {应该有必要用扇子} {fen};
+	#action {风不够大} {fen};
+	#action {赶紧扇风} {fen};
+
+	#action {应该马上加柴火} {ja};
+	#action {有需要加柴火} {ja};
+	#action {很需要加柴火} {ja};
+	#action {快加点柴火吧} {ja};
+	#action {大约快加点柴火} {ja};
+	#action {可能快加点柴火} {ja};
+	#action {柴火快烧光了} {ja};
+	#action {有多少柴火都加进去吧} {ja};
+	#action {可能有多少柴火都加进去吧} {ja};
+	#action {大约有多少柴火都加进去吧} {ja};
+	#action {太需要加柴火了} {ja};
+	#action {太需要加柴火了} {ja};
+	#action {再不加柴火} {ja};
+	#action {也许有需要加柴火} {ja};
+	#action {应该有多少柴火都加进去} {ja};
+}

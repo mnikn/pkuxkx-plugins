@@ -47,29 +47,18 @@
 	#var auto-xue-target-skill %2;
 	#var auto-xue-times 10;
 
-	auto-dazuo;
-
 	#echo 自动学习开始！;
 	#tick auto-xuem-ticker {
 		#if {@char.IsBusy{}} {
 			#return;
 		};
 
-		
-		#if {$char[HP][当前精神] > 80} {
-			xue $auto-xue-target-person for $auto-xue-target-skill $auto-xue-times;
-		};
 
-		#if {$char[HP][内力百分比] >= 20} {
-			yun regenerate;
-		};
+		recover-jin;
 
-
-		#if {$char[HP][精神百分比] <= 30 && $char[HP][气血百分比] <= 30} {
-			sleep;
-		};
-
-		
+		#if {$char[HP][当前精神] > 1} {
+			xue $auto-xue-target-person for $auto-xue-target-skill @math.Min{$char[HP][当前精神];50};
+		}
 	} 2;
 }
 #alias remove-auto-xuem {
@@ -78,7 +67,7 @@
 }
 
 #alias sshu {
-	study shu for 5;
+	study blade book for 5
 }
 #alias auto-study {
 	#var auto-study-target %1;
@@ -112,34 +101,48 @@
 	#var auto-study-book %1;
 	#var auto-study-times 5;
 
-	auto-dazuo;
-
 	#echo 自动学习开始！;
 	#tick auto-studym-ticker {
 		#if {@char.IsBusy{}} {
 			#return;
 		};
 
-		
-		#if {$char[HP][当前精神] > 80} {
+		recover-jin;
+
+		#if {$char[HP][当前精神] > 100} {
 			study $auto-study-book for $auto-study-times;
+			#return;
 		};
-
-		#if {$char[HP][内力百分比] >= 20} {
-			yun regenerate;
-		};
-
-
-		#if {$char[HP][精神百分比] <= 30 && $char[HP][气血百分比] <= 30} {
-			sleep;
-		};
-
-		
 	} 2;
 }
 #alias remove-auto-studym {
 	#untick auto-studym-ticker;
 	remove-auto-dazuo;
+}
+
+#alias recover-jin {
+	#if {$char[HP][气血百分比] >= 20 && $char[HP][内力百分比] < 99 && $char[HP][当前精神] > 100} {
+		dazuo max;
+		#return;
+	};
+
+	#if {$char[HP][当前内力] >= 50 && $char[HP][当前精神] < 100} {
+		yun regenerate;
+		#return;
+	};
+
+	
+	#if {$char[HP][精神百分比] <= 20 && $char[HP][内力百分比] <= 20} {
+		sleep;
+		#return;
+	};
+}
+
+#alias check-sleep {
+	#if {$char[HP][精神百分比] <= 20 && $char[HP][气血百分比] <= 20 && $char[HP][内力百分比] <= 20} {
+		sleep;
+		#return;
+	};
 }
 
 #alias auto-dazuo-inc {
@@ -154,12 +157,14 @@
 			};
 			dazuo 10;
 			#if {$char[HP][气血百分比] < 30} {
+				sshum;
 				sleep;
 			};
 		};
 
 		
-		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分比] == 50} {
+		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分比] < 60} {
+			sshum;
 			sleep;
 			#return;
 		};
@@ -171,6 +176,7 @@
 		#else {
         		dazuo 10;
 			#if {$char[HP][气血百分比] < 30} {
+				sshum;
 				sleep;
 			};
 		};
@@ -184,6 +190,18 @@
 	#unaction {你现在内力接近圆满};
 }
 
+#alias sshum {
+	sshu;
+	sshu;
+	sshu;
+	sshu;
+	sshu;
+	sshu;
+	sshu;
+	sshu;
+	sshu;
+}
+
 #alias auto-dazuo {
 	okLog 自动打坐开始！;
 	#tick auto-dazuo-ticker {
@@ -191,7 +209,6 @@
 			#return;
 		};
 
-		#action {无法产生内息运行全身经脉。$} {remove-autodazuo};
 		#action {你现在内力接近圆满} {
 			#if {@char.IsBusy{}} {
 				#return;
@@ -262,15 +279,18 @@
 			#return;
 		};
 		
-		#if {$char[HP][内力百分比] < 99 && $char[HP][气血百分比] > 80 && $char[HP][精神百分比] > 80} {
-			dazuo max;
+
+		#if {$char[HP][食物] < 100} {
+			eat baozi;
+			eat baozi;
+			eat baozi;
 		};
 
-		#if {${char[HP][饮水] < 150}} {
+		#if {$char[HP][饮水] < 150} {
 			drink;
 			drink;
 			drink;
-		}
+		};
 	} 1;
 }
 
