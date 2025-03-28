@@ -244,6 +244,30 @@
 	#unaction {你现在内力接近圆满};
 }
 
+#alias auto-tuna-inc {
+	okLog 自动吐纳增长开始！;
+	#tick auto-tuna-inc-ticker {
+		#if {@char.IsBusy{} || $char[HP][当前精神] < 99} {
+			#return;
+		};
+
+		recover-jin;
+
+		
+		#if { $char[HP][精力百分比] < 99 } {
+        		tuna max;
+    		};
+		#else {
+        		tuna 10;
+		};
+		
+	} 2;
+}
+#alias remove-auto-tuna-inc {
+	okLog 自动吐纳增长结束！;
+	#untick auto-tuna-inc-ticker;
+}
+
 #alias auto-dazuo {
 	okLog 自动打坐开始！;
 	#tick auto-dazuo-ticker {
