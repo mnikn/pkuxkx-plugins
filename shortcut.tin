@@ -67,29 +67,6 @@
 	remove-auto-dazuo;
 }
 
-#alias lianm {
-	#var auto-lianm-skill %1;
-	lian $auto-lianm-skill 50;
-}
-#alias auto-lianm {
-	#var auto-lianm-skill %1;
-	#echo 自动练习开始！;
-	#tick auto-lianm-ticker {
-		#if {@char.IsBusy{}} {
-			#return;
-		};
-
-
-		recover-hp;
-
-		#if {$char[HP][当前气血] > 50} {
-			lian $auto-lianm-skill 50;
-		}
-	} 2;
-}
-#alias remove-auto-lianm {
-	#untick auto-lianm-ticker;
-}
 
 #alias sshu {
 	#local times %1;
@@ -107,8 +84,29 @@
 
 #alias sshum {
 	sshu 50;
-	sshu 50;
 }
+#alias auto-sshum {
+	okLog 自动检测读书！;
+	auto-recover-jing;
+
+	#var auto-sshum-sleep %1;
+	#tick auto-sshum-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+		#if {$char[HP][精神百分比] > 80} {
+			sshum;
+			#if {$auto-sshum-sleep == 1} {
+				sleep;
+			};
+		};
+	} 1;
+}
+#alias remove-auto-sshum {
+	okLog 取消自动检测读书！;
+	#untick auto-sshum-ticker;
+	remove-auto-recover-jing;
+};
 
 #alias auto-study {
 	#var auto-study-target %1;
@@ -151,7 +149,8 @@
 
 		#if {$char[HP][当前精神] > 1} {
 			#math tmp {$char[HP][当前精神] - 10};
-			study $auto-study-book for @math.Min{$tmp;50};
+			#nop study $auto-study-book for @math.Min{$tmp;50};
+			read $auto-study-book @math.Min{$tmp;50};
 			#return;
 		};
 	} 2;
@@ -182,6 +181,10 @@
 
 	#if {$char[HP][当前内力] >= 50 && $char[HP][当前精神] < 100} {
 		yun regenerate;
+		#if {$char[HP][气血百分比] >= 20 && $char[HP][内力百分比] < 99 && $char[HP][当前精神] > 100} {
+			dazuo max;
+			#return;
+		};
 		#return;
 	};
 
@@ -226,6 +229,13 @@
 		
 		#if { $char[HP][内力百分比] < 99 } {
         		dazuo max;
+			#if { $char[HP][内力百分比] >= 99 } {
+        			dazuo 10;
+				#if {$char[HP][气血百分比] < 30} {
+					sshum;
+					sleep;
+				};
+			}
     		};
 		#else {
         		dazuo 10;
@@ -235,7 +245,7 @@
 			};
 		};
 		
-	} 2;
+	} 5;
 }
 #alias remove-auto-dazuo-inc {
 	okLog 自动打坐内力增长结束！;
@@ -247,15 +257,15 @@
 #alias auto-tuna-inc {
 	okLog 自动吐纳增长开始！;
 	#tick auto-tuna-inc-ticker {
-		#if {@char.IsBusy{} || $char[HP][当前精神] < 99} {
+		#if {@char.IsBusy{}} {
 			#return;
 		};
 
-		recover-jin;
-
+		auto-recover-jing;
 		
 		#if { $char[HP][精力百分比] < 99 } {
         		tuna max;
+			sleep;
     		};
 		#else {
         		tuna 10;
@@ -266,6 +276,7 @@
 #alias remove-auto-tuna-inc {
 	okLog 自动吐纳增长结束！;
 	#untick auto-tuna-inc-ticker;
+	remove-auto-recover-jing;
 }
 
 #alias auto-dazuo {
@@ -298,34 +309,53 @@
 	okLog 自动打坐结束！;
 }
 
+#alias auto-lian-hp {
+        #var auto-lian-target %1;
+        #var auto-lian-need-sleep %2;
 
-#alias auto-tuna {
-	okLog 自动吐纳开始！;
-	#tick auto-tuna-ticker {
-		#if {@char.IsBusy{} || $char[HP][气血百分比] < 70} {
-			#return;
-		};
+        okLog 开始练习！;
 
-		#action {你现在精力接近圆满} {
-			#if {@char.IsBusy{}} {
-				#return;
+	auto-recover-hp;
+        #tick auto-lian-hp-ticker {
+                #if {@char.IsBusy{}} {
+                        #return;
+                };
+
+		#if {$char[HP][气血百分比] > 80} {
+                	lian $auto-lian-target 50;
+			#if {$auto-lian-need-sleep == 1} {
+				sshum;
+				sleep;
 			};
-			tuna 10;
 		};
-
-		#if { $char[HP][精力百分比] < 99 } {
-			#if {$char[HP][精神百分比] > 80} {
-        			tuna max;
-			};
-    		};
-    		#else {
-        		tuna 10;
-    		};
-	} 1;
+        } 2;
 }
-#alias remove-auto-tuna {
-	#untick auto-tuna-ticker;
-	okLog 自动吐纳结束！;
+#alias remove-auto-lian-hp {
+        okLog 结束练习！;
+        #untick auto-lian-hp-ticker;
+	remove-auto-recover-hp;
+}
+
+#alias auto-recover-hp {
+	yun qi;
+	#action {让气血运行恢复正常} {
+		yun qi;
+	};
+}
+#alias remove-auto-recover-hp {
+        okLog 结束自动气血恢复！;
+	#unaction {让气血运行恢复正常};
+}
+
+#alias auto-recover-jing {
+	yun jing;
+	#action {让自身恢复正常} {
+		yun jing;
+	};
+}
+#alias remove-auto-recover-jing {
+        okLog 结束自动精神恢复！;
+	#unaction {让自身恢复正常};
 }
 
 #alias auto-pingdiao {
@@ -365,52 +395,47 @@
 	okLog 自动补满状态结束！;
 }
 
-#alias auto-climb-tree {
-	#tick auto-climb-tree-ticker {
-		#if {$char[HP][气血百分比] < 50} {
-			#if {$char[HP][内力百分比] > 49} {
-				yun recover;
-			};
+
+#alias auto-caizhuang {
+	okLog 自动踩桩！;
+
+	auto-recover-jing;
+	#tick auto-caizhuang-ticker {
+		#if {@char.IsBusy{}} {
 			#return;
 		};
-		climb tree;
-	} 2;
-}
-#alias remove-auto-climb-tree {
-	#untick auto-climb-tree-ticker;
-}
-
-#alias cb {
-	yun powerup;
-	#tick cb-ticker {
-		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分百] > 30} {
-			yun heal;
+		#if {$char[HP][精神百分比] > 20 && $char[HP][当前内力] > 100} {
+			cai zhuang;
+			#return;
+		};
+		#if {$char[HP][精神百分比] == 100 && $char[HP][当前内力] < 100} {
+			sshum;
+			#return;
+		};
+	} 1;
+	#tick auto-caizhuang-jing-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+		#if {$char[HP][精神百分比] > 80} {
+			dazuo max;
+			yun jing;
+			#return;
 		}
-	} 2;
+		yun jing;
+	} 62;
+}
+#alias remove-auto-caizhuang {
+	okLog 结束自动踩桩！;
+	#untick auto-caizhuang-ticker;
+	#untick auto-caizhuang-jing-ticker;
+	remove-auto-recover-jing;
 }
 
-#alias ecb {
-	#untick cb-ticker;
+#alias jianxin {
+    s;s;s;w;enter jianxinju;
 }
 
-#alias pfm {
-	perform sword.bafang;
-}
-
-#alias touxi {
-	#local target %1;
-	perform throwing.tan $target;
-};
-
-#alias crosshe {
-	ask yi about huanghe;
-	#action {上岸吧} {
-		#unaction {上岸吧};
-		out;
-	};
-	#action {正等着你呢} {
-		#unaction {正等着你呢};
-		enter;
-	};
-	yell boat;
+#alias psd {
+	perform sword.ding;
 }

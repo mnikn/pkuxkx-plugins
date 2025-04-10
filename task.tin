@@ -20,6 +20,7 @@
 				node walk sjy_sms;
 				#action {^你顺利到达了终点} {
 					#unaction {^你顺利到达了终点};
+					auto-sshum;
 					ask sengren about done;
 				};
 			} 2;

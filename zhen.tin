@@ -1,0 +1,63 @@
+#var zhen[META] {
+	{NAME} {zhen}
+	{DESC} {zhen 辅助脚本}
+	{AUTHOR} {mnikn}
+};
+
+#func {zhen.Init} {
+	okLog zhen 辅助脚本启动！;
+	#return true;
+}
+
+
+#alias ssao {
+	ask daoren about job;
+	event.Handle {GMCP.Move} {path.Walk} {$MODULE} {sao-job-step};
+	path.WalkSteps {sd;s;sd;sd;se;s;se} {
+		event.UnHandle {GMCP.Move} {path.Walk};
+		path.WalkSteps {nw;n;nw;nu;nu;n;nu};
+	};
+}
+
+#alias auto-ssao {
+	ask daoren about job;
+	event.Handle {GMCP.Move} {path.Walk} {$MODULE} {sao-job-step};
+	path.WalkSteps {sd;s;sd;sd;se;s;se} {
+		event.UnHandle {GMCP.Move} {path.Walk};
+		path.WalkSteps {nw;n;nw;nu;nu;n;nu} {
+			delay 2 {auto-ssao;};
+		};
+	};
+}
+
+#alias sao-job-step {
+	path.Walk.Stop;
+
+	sao;
+	#action {这里的落叶} {
+		#delay 5 {
+			#if {$char[HP][精神百分比] > 80} {
+				sshum;
+			};
+			sao;
+		};
+	};
+	#action {弄得到处都是} {
+		#delay 5 {
+			#if {$char[HP][精神百分比] > 80} {
+				sshum;
+			};
+			sao;
+		};
+	};
+	#action {一尘不染} {
+                path.Walk.Resume;
+	};
+}
+
+#alias writejin {
+	write;
+	#action {赶紧再蘸墨} {
+		write;
+	};
+}
