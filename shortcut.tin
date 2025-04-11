@@ -261,11 +261,18 @@
 			#return;
 		};
 
-		auto-recover-jing;
 		
-		#if { $char[HP][精力百分比] < 99 } {
-        		tuna max;
+		#if {$char[HP][精神百分比] < 20} {
+			yun regenerate;
+		};
+	
+		#if {$char[HP][精神百分比] <= 20 && $char[HP][内力百分比] <= 20} {
 			sleep;
+			#return;
+		};
+		
+		#if {$char[HP][精力百分比] < 99} {
+        		tuna max;
     		};
 		#else {
         		tuna 10;
@@ -438,4 +445,20 @@
 
 #alias psd {
 	perform sword.ding;
+}
+
+#alias auto-ju {
+	#action {你缓缓举起} {
+		#delay 3 {ju;};
+	};
+	#action {你至少要把} {
+		get shi suo;
+		ju;
+	};
+	get shi suo;
+	ju;
+}
+#alias remove-auto-ju {
+	#unaction {你缓缓举起};
+	#unaction {你至少要把};
 }
