@@ -27,3 +27,77 @@
 		};
 	}
 }
+
+#alias pujob {
+	#action {梅庄} {
+		ask pu about fail;
+	};
+	#action {姑苏慕容} {
+		ask pu about fail;
+	};
+	#action {上饶} {
+		node walk mrf_sr;
+	};
+	#action {泉州} {
+		node walk mrf_qz;
+	};
+	#action {西湖} {
+		node walk mrf_xhab;
+	};
+	#action {建康府} {
+		node walk mrf_jk;
+	};
+	#action {临安府} {
+		node walk mrf_hz;
+	};
+	#action {岳王墓} {
+		node walk mrf_yfm;
+	};
+	#action {湖州} {
+		node walk mrf_hzf;
+	};
+	#action {龙泉镇} {
+		node walk mrf_lqz;
+	};
+	#action {温州} {
+		node walk mrf_wenz;
+	};
+	#action {雁荡山} {
+		node walk mrf_yds;
+	};
+	#action {建宁} {
+		node walk mrf_jn;
+	};
+	#action {铜关镇} {
+		node walk mrf_tgz;
+	};
+	#action {慕容世家家贼死了} {
+		gcor;
+		#unaction {慕容世家家贼死了};
+	};
+	ask pu about job;
+	#delay 5 {
+		#unaction {梅庄};
+		#unaction {姑苏慕容};
+		#unaction {上饶};
+		#unaction {泉州};
+		#unaction {西湖};
+		#unaction {建康府};
+		#unaction {临安府};
+		#unaction {岳王墓};
+		#unaction {湖州};
+		#unaction {龙泉镇};
+		#unaction {温州};
+		#unaction {雁荡山};
+		#unaction {建宁};
+		#unaction {铜关镇};
+	};
+}
+#alias pufin {
+	give xin jian to pu ren;
+}
+#alias az {
+	attack mnikn's murong jiazei;
+}
+
+

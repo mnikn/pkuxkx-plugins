@@ -108,6 +108,25 @@
 	remove-auto-recover-jing;
 };
 
+
+#alias auto-sshu {
+	okLog 自动检测读书！;
+
+	#tick auto-sshu-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+		#if {$char[HP][精神百分比] > 80} {
+			sshum;
+		};
+	} 1;
+}
+#alias remove-auto-sshu {
+	okLog 取消自动检测读书！;
+	#untick auto-sshu-ticker;
+	remove-auto-recover-jing;
+};
+
 #alias auto-study {
 	#var auto-study-target %1;
 	#var auto-xue-times 5;
@@ -149,8 +168,8 @@
 
 		#if {$char[HP][当前精神] > 1} {
 			#math tmp {$char[HP][当前精神] - 10};
-			#nop study $auto-study-book for @math.Min{$tmp;50};
-			read $auto-study-book @math.Min{$tmp;50};
+			study $auto-study-book for @math.Min{$tmp;50};
+			#nop read $auto-study-book @math.Min{$tmp;50};
 			#return;
 		};
 	} 2;
@@ -158,6 +177,40 @@
 #alias remove-auto-studym {
 	#untick auto-studym-ticker;
 	remove-auto-dazuo;
+}
+
+
+#alias auto-jing-job {
+	#var command %1;
+
+	#tick auto-jing-job-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+
+		recover-jin;
+
+		#if {$char[HP][精神百分比] > 20} {
+			$command;
+			#return;
+		};
+	} 2;
+}
+#alias remove-auto-jing-job {
+	#untick auto-jing-job-ticker;
+}
+
+
+#alias auto-lingwu {
+	#var auto-lingwu-target %1;
+
+	#echo 自动领悟开始！;
+
+	auto-jing-job {lingwu $auto-lingwu-target 50};
+}
+#alias remove-auto-lingwu {
+	#echo 自动领悟结束！;
+	remove-auto-jing-job;
 }
 
 #alias recover-hp {
@@ -322,7 +375,10 @@
 
         okLog 开始练习！;
 
-	auto-recover-hp;
+	
+	#if {$auto-lian-need-sleep == 1} {
+		auto-recover-hp;
+	};
         #tick auto-lian-hp-ticker {
                 #if {@char.IsBusy{}} {
                         #return;
@@ -332,6 +388,9 @@
                 	lian $auto-lian-target 50;
 			#if {$auto-lian-need-sleep == 1} {
 				sshum;
+				#if {$auto-lian-need-sleep == 1} {
+					auto-recover-hp;
+				};
 				sleep;
 			};
 		};
@@ -447,18 +506,66 @@
 	perform sword.ding;
 }
 
-#alias auto-ju {
-	#action {你缓缓举起} {
-		#delay 3 {ju;};
-	};
-	#action {你至少要把} {
-		get shi suo;
-		ju;
-	};
-	get shi suo;
-	ju;
+
+#alias auto-long-jing-job {
+	#var auto-long-jing-job-command %1;
+	auto-recover-jing;
+	#tick auto-long-jing-job-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+
+		#if {$char[HP][当前精神] > 80} {
+			$auto-long-jing-job-command;
+			#return;
+		};
+		#else {
+			auto-recover-jing;
+		};
+	} 2;
 }
-#alias remove-auto-ju {
-	#unaction {你缓缓举起};
-	#unaction {你至少要把};
+#alias remove-auto-long-jing-job {
+	#untick auto-long-jing-job-ticker;
+}
+
+#alias auto-canju {
+	okLog 自动残局！;
+	auto-long-jing-job {watch canju};
+}
+#alias remove-auto-canju {
+	okLog 结束自动残局！;
+	remove-auto-long-jing-job;
+}
+
+
+#alias auto-sanhua {
+	#echo 自动三花开始！;
+	auto-recover-jing;
+	#tick auto-sanhua-ticker {
+		#if {@char.IsBusy{}} {
+			#return;
+		};
+
+		#if {$char[HP][当前精神] > 80} {
+			l wall;
+			#return;
+		};
+		#else {
+			auto-recover-jing;
+		};
+	} 2;
+}
+#alias remove-auto-sanhua {
+	#untick auto-sanhua-ticker;
+	remove-auto-recover-jing;
+}
+#alias gcor {
+	get all from corpse;
+}
+
+#alias pw {
+	yun powerup;
+}
+#alias ph {
+	yun recover;
 }
