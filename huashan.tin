@@ -8,18 +8,6 @@
 	okLog 华山辅助脚本启动！;
 	#return true;
 }
-#alias yue-autojob {
-	okLog 开启自动巡山！;
-	#undelay {yue-autojob-delayer};
-	#delay {yue-autojob-delayer} {
-		yue-autojob;
-	} 160;
-	yue-job;
-}
-#alias remove-yue-autojob {
-	okLog 结束自动巡山！;
-	#undelay {yue-autojob-delayer};
-}
 
 #var yue-auto-job-enable {false};
 #alias yue-job {
@@ -69,61 +57,23 @@
 	} 4;
 }
 
-#alias ningjob {ask ning about job}
-#alias ningfin {ask ning about finish}
 #alias zd {zhidian student};
 #alias gen {ask student about 跟随};
-#alias huashan-feed {
-	#if {$char[HP][忙]} {
-		#return;
+
+
+#var ning-auto-job-enable {false};
+#alias ning-job {
+	#if {"%1" != ""} {
+		#var ning-auto-job-enable {%1};
 	};
-
-	#echo 开始补满状态！;
-	path.WalkSteps {n;n;e} {
-		fill hulu;
-		drink;
-		drink;
-		drink;
-		drink;
-		drink;
-		drink;
-		drink;
-		drink;
-		drink;
-		drink;
-		fill hulu;
-		
-		
-		path.WalkSteps {w;s;s;s;s} {
-			get liuli qiezi;
-			eat liuli qiezi;	
-			eat liuli qiezi;	
-			eat liuli qiezi;	
-			eat liuli qiezi;
-
-			
-			path.WalkSteps {n;w;s} {
-				sleep;
-				#action {^你一觉醒来} {
-					path.WalkSteps {n;e;n} {
-						okLog 结束补满状态！;
-						#unaction {^你一觉醒来};
-					};
-				};
-			};
-		};
-	};
-}
-
-#alias do-ningjob {
 	ask ning about job;
 	e;e;e;
 	auto-zd;
 	#action {趁你不注意} {
 		remove-auto-zd;
-		map.FocusNPC {{id} {$user[id]'s student}} command {get_dz};
-		event.Handle {GMCP.Move} {path.Walk} {$MODULE} {zd_walk_time};
-		path.WalkSteps {$dizi-path} {#delay 1 auto-zd};
+		#delay 3 {
+			find-dizi;
+		};
 	};
 	#action {有板有眼} {
 		#unaction {趁你不注意};
@@ -131,34 +81,61 @@
 		remove-auto-zd;
 		w;w;w;
 		ask ning about finish;
+
+		
+		#if {$ning-auto-job-enable} {
+			#delay ning-job-delayer {
+				#if (!@char.IsBusy{}) {
+					ning-job $ning-auto-job-enable;
+				};
+				#else {
+					busy.Wait {
+						ning-job $ning-auto-job-enable;
+					};
+				};
+			} 2;
+		};
 	};
 }
+#alias remove-ning-job {
+	#var ning-auto-job-enable 0;
+	remove-auto-zd;
+}
+
 #alias auto-zd {
 	#tick auto-zd-ticker {
 		zhidian student;
 	} 1;
+
+	#action {^什么} {
+		remove-auto-zd;
+		#unaction {^什么};
+	};
 }
 #alias remove-auto-zd {
 	#untick auto-zd-ticker; 
+	#unaction {^什么};
 }
 
 #var dizi-path {w;s;n;w;s;n;w;e;e;n;n;n;e;e;w;sd;sd;sd;nu;nu;nu;w;nd;enter;out;eu;wd;nw;wd;w;sw;ne;up;down;e;eu;se;nu;n;nd;wu;ed;n;nd;nd;w;enter;out;east;nd;su;su;su;s;nw;nd;nd;nu;sd;wd;nd;wd;nd;nw;n;s;ne;sw;se;se;enter;out;su;enter;out;sw;sw;eu;su;eu;nu;sd;su;su;e;su;sw;s;sd;su;s;s;s;e};
 #alias find-dizi {
-	map.FocusNPC {{id} {$user[id]'s student}} command {get_dz};
-	event.Handle {GMCP.Move} {path.Walk} {$MODULE} {zd_walk_time};
-	path.WalkSteps {$dizi-path};
+	map.FocusNPC {{id} {$user[id]'s student}} command {ning-ask-dz};
+	event.Handle {GMCP.Move} {path.Walk} {$MODULE} {ning-zd-walk-time};
+	path.WalkSteps {$dizi-path} {auto-zd};
+	set brief 0;
 }
-#alias get_dz {
+#alias ning-ask-dz {
 	#undelay walk.Resume;
 	#action {%*道：好吧，好吧，我回去还不行吗？} {
-		#untick tk_ask_dizi;
+		#untick ning-ask-dz-ticker;
 		map.FocusNPC;
-		path.Walk.Stop;
+		#nop path.Walk.Stop;
+		path.Walk.Resume;
 	};
-	#tick {tk_ask_dizi} {ask student about 跟随;} {2};
+	#tick {ning-ask-dz-ticker} {ask student about 跟随;} {2};
 }
 
-#alias zd_walk_time {
+#alias ning-zd-walk-time {
 	#if {"$gGMCP[Move][房间名]" == "练功房"} {
 		path.end;
 		event.UnHandle {GMCP.Move} {path.Walk};
@@ -171,22 +148,4 @@
 	};
 
 	#delay walk.Resume {path.Walk.Resume} 0.2;
-}
-
-#alias huashan-mz {
-	loyalty challenge;
-}
-
-
-#alias autofeed {
-	okLog 开始自动补满状态！;
-	#tick autofeed-ticker {
-		#if {$char[HP][食物] < 30 || $char[HP][饮水] < 30 && "$gMapRoom[name]" == "客厅"} {
-			huashan-feed;
-		};
-	} 20;
-}
-#alias remove-autofeed {
-	#untick autofeed-ticker;
-	okLog 结束自动补满状态！;
 }

@@ -70,14 +70,14 @@
 
 #alias sshu {
 	#local times %1;
-	#local book {shediao};
+	#local book {shu};
 	#if {$times != ""} {
-		#nop study $book for $times;
-		read $book $times;
+		study $book for $times;
+		#nop read $book $times;
 	};
 	#else {
-		#nop study $book for 10;
-		read $book $times;
+		study $book for 10;
+		#nop read $book $times;
 	};
 }
 
@@ -205,13 +205,29 @@
 	#var auto-lingwu-target %1;
 
 	#echo 自动领悟开始！;
-
+	#action {你的基本功夫比你的高级功夫还高} {
+		remove-auto-lian-hp;
+		remove-auto-jing-job;
+		auto-lian-hp $auto-lingwu-target 1;
+	};
+	#action {你需要提高基本功} {
+		remove-auto-lian-hp;
+		remove-auto-jing-job;
+		auto-jing-job {lingwu $auto-lingwu-target 50};
+	};
+	#action {你已经达到你的技能等级极限} {
+		remove-auto-lian-hp;
+		remove-auto-jing-job;
+		auto-jing-job {lingwu $auto-lingwu-target 50};
+	};
 	auto-jing-job {lingwu $auto-lingwu-target 50};
 }
 #alias remove-auto-lingwu {
 	#echo 自动领悟结束！;
 	remove-auto-jing-job;
+	remove-auto-lian-hp;
 }
+
 
 #alias recover-hp {
 	#if {$char[HP][当前内力] >= 50 && $char[HP][当前气血] < 100} {
@@ -502,10 +518,6 @@
     s;s;s;w;enter jianxinju;
 }
 
-#alias psd {
-	perform sword.ding;
-}
-
 
 #alias auto-long-jing-job {
 	#var auto-long-jing-job-command %1;
@@ -566,6 +578,21 @@
 #alias pw {
 	yun powerup;
 }
-#alias ph {
+#alias pr {
 	yun recover;
+}
+#alias ph {
+	yun heal;
+}
+#alias drawall {
+	draw armor;
+	draw head;
+	draw sword;
+	draw boots;
+	draw cloth;
+	draw surcoat;
+	wear all;
+	wi sword;
+	wear zhanyi;
+	wear zhanxue;
 }
