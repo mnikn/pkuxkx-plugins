@@ -70,14 +70,14 @@
 
 #alias sshu {
 	#local times %1;
-	#local book {shu};
+	#local book {shediao};
 	#if {$times != ""} {
-		study $book for $times;
-		#nop read $book $times;
+		#nop study $book for $times;
+		read $book $times;
 	};
 	#else {
-		study $book for 10;
-		#nop read $book $times;
+		#nop study $book for 10;
+		read $book $times;
 	};
 }
 
@@ -494,7 +494,7 @@
 			sshum;
 			#return;
 		};
-	} 1;
+	} 2;
 	#tick auto-caizhuang-jing-ticker {
 		#if {@char.IsBusy{}} {
 			#return;
