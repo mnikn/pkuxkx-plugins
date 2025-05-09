@@ -10,6 +10,7 @@
 
 
 #alias auto-xue {
+	auto-recover-jing;
 	#var auto-xue-target-person %1;
 	#var auto-xue-target-skill %2;
 	#var auto-xue-times 10;
@@ -24,20 +25,13 @@
 		#if {$char[HP][当前精神] > 80} {
 			xue $auto-xue-target-person for $auto-xue-target-skill $auto-xue-times;
 		};
-		#else {
-			#if {$char[HP][当前内力] < 50} {
-				#return;	
-			};
-			#if {$char[HP][内力百分比] > 45} {
-				yun regenerate;
-			};
-		};
 		
 	} 1;
 
 	#act {缺乏实战经验} {remove-auto-xue;};
 }
 #alias remove-auto-xue {
+	remove-auto-recover-jing;
 	#untick auto-xue-ticker;
 	#echo 自动学习结束！; 
 }
@@ -157,6 +151,7 @@
 
 #alias auto-studym {
 	#var auto-study-book %1;
+	auto-recover-jing;
 
 	#echo 自动学习开始！;
 	#tick auto-studym-ticker {
@@ -164,9 +159,7 @@
 			#return;
 		};
 
-		recover-jin;
-
-		#if {$char[HP][当前精神] > 1} {
+		#if {$char[HP][精神百分比] > 80} {
 			#math tmp {$char[HP][当前精神] - 10};
 			study $auto-study-book for @math.Min{$tmp;50};
 			#nop read $auto-study-book @math.Min{$tmp;50};
@@ -176,7 +169,7 @@
 }
 #alias remove-auto-studym {
 	#untick auto-studym-ticker;
-	remove-auto-dazuo;
+	remove-auto-recover-jing;
 }
 
 
@@ -322,6 +315,67 @@
 	#unaction {无法产生内息运行全身经脉。$};
 	#unaction {你现在内力接近圆满};
 }
+
+
+#alias xue-auto-dazuo-inc {
+	okLog 自动打坐内力增长开始！;
+	#action {你一觉醒来} {
+		n;
+	};
+	#tick xue-auto-dazuo-inc-ticker {
+		#if {@char.IsBusy{} || $char[HP][当前精神] < 99} {
+			#return;
+		};
+		#action {你现在内力接近圆满} {
+			#if {@char.IsBusy{}} {
+				#return;
+			};
+			dazuo 10;
+			#if {$char[HP][气血百分比] < 30} {
+				sshum;
+				sleep;
+			};
+		};
+
+		
+		#if {$char[HP][气血百分比] < 30 && $char[HP][内力百分比] < 60} {
+			sshum;
+			s;
+			sleep;
+			#return;
+		};
+
+		
+		#if { $char[HP][内力百分比] < 99 } {
+        		dazuo max;
+			#if { $char[HP][内力百分比] >= 99 } {
+        			dazuo 10;
+				#if {$char[HP][气血百分比] < 30} {
+					sshum;
+					s;
+					sleep;
+				};
+			}
+    		};
+		#else {
+        		dazuo 10;
+			#if {$char[HP][气血百分比] < 30} {
+				sshum;
+				s;
+				sleep;
+			};
+		};
+		
+	} 5;
+}
+#alias remove-xue-auto-dazuo-inc {
+	okLog 自动打坐内力增长结束！;
+	#untick xue-auto-dazuo-inc-ticker;
+	#unaction {无法产生内息运行全身经脉。$};
+	#unaction {你现在内力接近圆满};
+	#unaction {你一觉醒来};
+}
+
 
 #alias auto-tuna-inc {
 	okLog 自动吐纳增长开始！;

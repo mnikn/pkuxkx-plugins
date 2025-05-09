@@ -1,0 +1,129 @@
+#var xue[META] {
+	{NAME} {xue}
+	{DESC} {xue 辅助脚本}
+	{AUTHOR} {mnikn}
+};
+
+#func {xue.Init} {
+	okLog xue 辅助脚本启动！;
+	#return true;
+}
+
+#var auto-fjob-enable {false};
+#alias fjob {
+	#if {"%1" != ""} {
+		#var auto-fjob-enable {true};
+	};
+	#action {你就在饭堂帮忙收拾碗筷} {
+		shoushi 碗筷;
+	};
+	#action {你去伙房帮忙烧火} {
+		n;
+		shao 火;
+	};
+	#action {你凑在灶前} {
+		#delay 5 {
+			shao 火;
+		}
+	};
+	#action {你就在饭堂帮忙整理桌椅} {
+		zhengli 桌椅;
+	};
+	#action {你摆正一块木头，一刀劈了下去} {
+		#delay 3 {
+			pi 柴;
+		};
+	};
+	#action {你拿着这柄柴刀} {
+		wi chai dao;
+		n;
+		pi 柴;
+	};
+	#action {你已经劈好了} {
+		#delay 2 {
+			s;
+			unwield chai dao;
+			give chai dao to li;
+			ask li about 完成;
+			#if {$auto-fjob-enable} {
+				fjob $auto-fjob-enable;
+			};
+			#delay 5 {
+				auto-sshum;
+				fjob 1;
+			};
+		};
+	};
+	#action {你将碗筷放下} {
+		#delay 1 {
+			s;
+			shoushi 碗筷;
+		};
+	};
+	#action {火已经够旺了} {
+		#delay 2 {
+			s;
+			ask li about 完成;
+			#if {$auto-fjob-enable} {
+				fjob $auto-fjob-enable;
+			};
+			#delay 5 {
+				auto-sshum;
+				fjob 1;
+			};
+		};
+	};
+	#action {你的任务完成了} {
+		#delay 2 {
+			ask li about 完成;
+			#if {$auto-fjob-enable} {
+				fjob $auto-fjob-enable;
+			};
+			#delay 5 {
+				auto-sshum;
+				fjob 1;
+			};
+		};
+	};
+	#action {你整理着饭堂中的桌椅} {
+		#delay 10 {
+			auto-sshum;
+			zhengli 桌椅;
+		};
+	};
+	#action {来向我覆命吗} {
+		#delay 2 {
+			ask li about 完成;
+			#if {$auto-fjob-enable} {
+				fjob $auto-fjob-enable;
+			};
+			#delay 5 {
+				auto-sshum;
+				fjob 1;
+			};
+		};
+	};
+
+	ask li about 帮忙;
+}
+
+
+#alias remove-fjob {
+	#var auto-fjob-enable {false};
+}
+
+#alias ashou {
+	shoushi 碗筷;
+	#action {你将碗筷放下} {
+		#delay 1 {
+			s;
+			shoushi 碗筷;
+		};
+	};
+	#action {你的任务完成了} {
+		ask li about 完成;
+	};
+	#action {来向我覆命吗} {
+		ask li about 完成;
+	};
+}
